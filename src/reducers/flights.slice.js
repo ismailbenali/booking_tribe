@@ -13,7 +13,6 @@ export const $search = createAsyncThunk('flights/search', async ({flyFrom, limit
 
     const flights = await searchFlights(flyFrom, limit, sort, locale, to, dateFrom, dateTO, returnFrom, returnTo)
 
-    console.log(flights.data)
     return flights.data
 });
 

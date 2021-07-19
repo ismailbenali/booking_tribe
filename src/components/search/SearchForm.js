@@ -1,39 +1,30 @@
 import {Form, Button, Select, DatePicker, Spin} from 'antd';
 import {useState} from "react";
-import {searchLocation} from "../../api";
 import {useDispatch} from "react-redux";
+import moment from "moment";
 import {$search} from "../../reducers/flights.slice";
-
+import {searchLocation} from "../../api";
 const {RangePicker} = DatePicker;
-
-
 const dateFormat = 'YYYY/MM/DD';
 
 function SearchForm() {
     const [form] = Form.useForm();
     const [options, setOptions] = useState([]);
     const [fetching, setFetching] = useState(false);
-
     const dispatch = useDispatch()
-    const onFinish = ({flyFrom, to, date}) => {
-        console.log(date);
 
+    const onFinish = ({flyFrom, to, date}) => {
         const params = {
             flyFrom, limit: 30, sort: 'price', locale: 'en-US', to,
             dateFrom: date[0].format('DD/MM/YYYY'), dateTO: date[1].format('DD/MM/YYYY'),
             returnFrom: date[1].format('DD/MM/YYYY'), returnTo: date[1].format('DD/MM/YYYY'),
         }
-
         dispatch($search({...params}))
-        console.log(params)
     };
-
 
     const onSearch = async (searchText) => {
         setFetching(true)
         const locations = await searchLocation(searchText, 5, 'name', 'en-US', 'airport', 'true')
-
-        console.log(locations)
         setOptions(
             !searchText ? [] : locations.locations.map(location => {
                 return {label: location.name, value: location.city.id}
@@ -46,6 +37,12 @@ function SearchForm() {
         labelCol: {span: 8},
         wrapperCol: {span: 16},
     };
+
+    function disabledDate(current) {
+        // Can not select days before today and today
+        return current && current < moment().endOf('day');
+    }
+
     return <div style={{marginTop: 20}}>
         <Form {...layout} style={{display: 'flex', flexDirection: 'column'}} form={form} name="search-flights"
               onFinish={onFinish}>
@@ -97,6 +94,7 @@ function SearchForm() {
                     ]}
                 >
                     <RangePicker
+                        disabledDate={disabledDate}
                         format={dateFormat}
                     />
                 </Form.Item>

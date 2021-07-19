@@ -4,8 +4,6 @@ import moment from "moment";
 const {Step} = Steps;
 
 function FlightCard({flight}) {
-    console.log(flight)
-
     const {id, dTime, aTime, countryFrom, countryTo, price, cityFrom, cityTo, distance, fly_duration} = flight
     return <div style={{marginBottom: 15}}>
         <Card bodyStyle={{display: 'flex'}} key={id} style={{width: 350}}>
